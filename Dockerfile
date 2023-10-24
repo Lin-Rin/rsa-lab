@@ -1,6 +1,5 @@
 #FROM eclipse-temurin:17-jdk-focal
-#FROM --platform=linux/arm64/v8 eclipse-temurin:17.0.7_7-jre-jammy
-FROM --platform=linux/amd64 eclipse-temurin:17.0.7_7-jre-jammy
+FROM --platform=linux/arm64 eclipse-temurin:17-jdk-ubi9-minimal
 
 WORKDIR /app
 
