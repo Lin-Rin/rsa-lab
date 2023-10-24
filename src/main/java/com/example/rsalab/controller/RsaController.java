@@ -26,6 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rsa")
 @RequiredArgsConstructor
 public class RsaController {
+    private PrivateKey privateKey;
+    private final EncryptionService encryptionService;
+    private final DecryptionService decryptionService;
+
     @GetMapping("/serverKey")
     public GenerateKeyRespondDto serverKey(@RequestBody GenerateKeyRespondDto respondDto) {
         return new GenerateKeyRespondDto();
@@ -33,6 +37,7 @@ public class RsaController {
 
     @GetMapping("/encrypt")
     public EncryptRespondDto encrypt(@RequestBody EncryptRequestDto requestDto) {
+        privateKey = new PrivateKey(); // init private key, only here allowed
         return new EncryptRespondDto();
     }
 
@@ -57,7 +62,7 @@ public class RsaController {
     }
 
     @GetMapping("/receiveKey")
-    public RecevieKeyRespondDto receiveKey(@RequestBody RecevieKeyRequestDto respondDto) {
+    public RecevieKeyRespondDto receiveKey(@RequestBody RecevieKeyRequestDto requestDto) {
         return new RecevieKeyRespondDto();
     }
 }
