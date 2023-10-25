@@ -63,12 +63,12 @@ public class RsaService {
         return cipherText.modPow(d, n);
     }
 
-    public BigInteger sign() {
-        return null;
+    public BigInteger sign(BigInteger message, BigInteger d, BigInteger n) {
+        return message.modPow(d, n);
     }
 
-    public BigInteger verify() {
-        return null;
+    public Boolean verify(BigInteger message, BigInteger signature, BigInteger n, BigInteger exponent) {
+        return signature.modPow(exponent, n).equals(message);
     }
 
     public BigInteger sendKey() {

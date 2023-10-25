@@ -50,9 +50,9 @@ public class RsaController {
         BigInteger p1 = keys.get(2); // private
         BigInteger q1 = keys.get(3); // private
         BigInteger d1 = rsaService.getD(p1, q1, EXPONENT); // private
-        privateKey2.setQ(q);
-        privateKey2.setP(p);
-        privateKey2.setD(d);
+        privateKey2.setQ(q1);
+        privateKey2.setP(p1);
+        privateKey2.setD(d1);
 
         BigInteger n = p.multiply(q); // public + exp
         BigInteger n1 = p1.multiply(q1); // public + exp
@@ -92,12 +92,26 @@ public class RsaController {
 
     @GetMapping("/sign")
     public SignRespondDto sign(@RequestBody SignRequestDto requestDto) {
-        return new SignRespondDto();
+        SignRespondDto respondDto = new SignRespondDto();
+        BigInteger message = new BigInteger(requestDto.getMessage(), 16);
+
+        respondDto.setSignature(rsaService.sign(message, privateKey1.getD(),
+                privateKey1.getP().multiply(privateKey1.getQ())).toString(16));
+
+        return respondDto;
     }
 
     @GetMapping("/verify")
     public VerifyRespondDto verify(@RequestBody VerifyRequestDto requestDto) {
-        return new VerifyRespondDto();
+        VerifyRespondDto respondDto = new VerifyRespondDto();
+        BigInteger message = new BigInteger(requestDto.getMessage(), 16);
+        BigInteger signature = new BigInteger(requestDto.getSignature(), 16);
+        BigInteger modulus = new BigInteger(requestDto.getModulus(), 16);
+        BigInteger publicExponent = new BigInteger(requestDto.getPublicExponent(), 16);
+
+        respondDto.setVerified(rsaService.verify(message, signature, modulus, publicExponent));
+
+        return respondDto;
     }
 
     @GetMapping("/sendKey")
