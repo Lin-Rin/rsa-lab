@@ -18,13 +18,11 @@ public class PrimeNumberGenerator implements Supplier<Long> {
     }
 
     private boolean checkIfPrime(Long number) {
-        boolean result = true;
         for (int i = 2; i < Math.sqrt(number); i++) {
             if (number % i == 0) {
-                result = false;
-                break;
+                return false;
             }
         }
-        return result;
+        return true;
     }
 }
