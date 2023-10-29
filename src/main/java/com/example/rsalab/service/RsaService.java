@@ -1,23 +1,21 @@
 package com.example.rsalab.service;
 
 import com.example.rsalab.util.math.PrimeNumberGenerator;
-import com.example.rsalab.util.math.SimplicityTest;
 import org.springframework.stereotype.Component;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Component
 public class RsaService {
-    private final Supplier<BigInteger> supplier = new PrimeNumberGenerator(256);
-    private final Predicate<BigInteger> predicate = new SimplicityTest();
+    private final PrimeNumberGenerator supplier = new PrimeNumberGenerator();
 
-    public List<BigInteger> generateKeys() {
+    public List<BigInteger> generateKeys(int length) {
         List<BigInteger> list = new ArrayList<>();
+
+        supplier.setLength(length);
 
         for (;;) {
             list.clear();
@@ -28,21 +26,17 @@ public class RsaService {
             list.add(supplier.get());
 
             list = list.stream()
-                    .filter(predicate)
                     .sorted(Comparator.reverseOrder())
                     .collect(Collectors.toList());
 
-            if (list.size() == 4) {
-                BigInteger p = new BigInteger(list.get(0).toString());
-                BigInteger q = new BigInteger(list.get(1).toString());
-                BigInteger p1 = new BigInteger(list.get(2).toString());
-                BigInteger q1 = new BigInteger(list.get(3).toString());
+            BigInteger p = new BigInteger(list.get(0).toString());
+            BigInteger q = new BigInteger(list.get(1).toString());
+            BigInteger p1 = new BigInteger(list.get(2).toString());
+            BigInteger q1 = new BigInteger(list.get(3).toString());
 
-                if (p.multiply(q).compareTo(p1.multiply(q1)) <= 0) {
-                    break;
-                }
+            if ((p.multiply(q)).compareTo((p1.multiply(q1))) > 0) {
+                break;
             }
-
         }
 
         // -> 3, 2, 1

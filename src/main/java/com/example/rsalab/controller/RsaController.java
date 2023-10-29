@@ -35,14 +35,13 @@ public class RsaController {
     @GetMapping("/serverKey")
     public GenerateKeyRespondDto serverKey() {
         GenerateKeyRespondDto respond = new GenerateKeyRespondDto();
-        List<BigInteger> keys = rsaService.generateKeys();
+        List<BigInteger> keys = rsaService.generateKeys(128);
         privateKey1 = new PrivateKey();
         privateKey2 = new PrivateKey();
 
         BigInteger p = keys.get(0); // private
         BigInteger q = keys.get(1); // private
         BigInteger d = rsaService.getD(p, q, EXPONENT); // private
-        System.out.println(d.toString(16));
         privateKey1.setQ(q);
         privateKey1.setP(p);
         privateKey1.setD(d);
@@ -55,7 +54,6 @@ public class RsaController {
         privateKey2.setD(d1);
 
         BigInteger n = p.multiply(q); // public + exp
-        BigInteger n1 = p1.multiply(q1); // public + exp
 
         respond.setModulus(n.toString(16));
         respond.setPublicExponent(EXPONENT.toString(16));

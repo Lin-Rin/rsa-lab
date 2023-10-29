@@ -1,5 +1,6 @@
 package com.example.rsalab.util.math;
 
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -9,11 +10,11 @@ import io.github.kosssst.asymcryptolab1.generators.L20Generator;
 
 @Component
 public class PrimeNumberGenerator implements Supplier<BigInteger> {
-    private final int length;
+    @Setter
+    private int length = 256;
     private final L20Generator generator;
 
-    public PrimeNumberGenerator(int length) {
-        this.length = length;
+    public PrimeNumberGenerator() {
         this.generator = new L20Generator();
     }
 
@@ -22,7 +23,9 @@ public class PrimeNumberGenerator implements Supplier<BigInteger> {
         Predicate<BigInteger> simplicityTest = new SimplicityTest();
         BigInteger number = new BigInteger(generator.generate(this.length), 2);
         BigInteger limit = BigInteger.TWO.pow(this.length).subtract(number).divide(BigInteger.TWO);
+
         if (number.mod(BigInteger.TWO).equals(BigInteger.ZERO)) number = number.add(BigInteger.ONE);
+
         while (true) {
             for (BigInteger i = BigInteger.ZERO; i.compareTo(limit) <= 0; i = i.add(BigInteger.ONE)) {
                 BigInteger newNumber = number.add(i.multiply(BigInteger.TWO));
