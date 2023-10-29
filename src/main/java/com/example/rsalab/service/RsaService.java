@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class RsaService {
-    private final Supplier<BigInteger> supplier = new PrimeNumberGenerator();
+    private final Supplier<BigInteger> supplier = new PrimeNumberGenerator(256);
     private final Predicate<BigInteger> predicate = new SimplicityTest();
 
     public List<BigInteger> generateKeys() {
