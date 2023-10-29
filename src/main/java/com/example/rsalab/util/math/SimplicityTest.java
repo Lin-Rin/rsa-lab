@@ -27,7 +27,7 @@ public class SimplicityTest implements Predicate<BigInteger> {
             }
         }
 
-        for (int k = 0; k < 10; k++) {
+        for (int k = 0; k < 2048; k++) {
             BigInteger x = new BigInteger(generator.generate(number.bitLength()), 2);
             x = x.mod(number);
 

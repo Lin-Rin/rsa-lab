@@ -39,23 +39,31 @@ public class RsaController {
         privateKey1 = new PrivateKey();
         privateKey2 = new PrivateKey();
 
-        BigInteger p = keys.get(0); // private
-        BigInteger q = keys.get(1); // private
-        BigInteger d = rsaService.getD(p, q, EXPONENT); // private
+//        BigInteger p = new BigInteger("10234944320932426457");
+//        BigInteger q = new BigInteger("17871165721432431077");
+
+        BigInteger p = keys.get(0);
+        BigInteger q = keys.get(1);
+
+        System.out.println(p + " " + p.bitLength() + " " + p.toString(2).length());
+        System.out.println(q + " " + q.bitLength() + " " + q.toString(2).length());
+        System.out.println();
+
+        BigInteger d = rsaService.getD(p, q, EXPONENT);
         privateKey1.setQ(q);
         privateKey1.setP(p);
         privateKey1.setD(d);
+        privateKey1.setN(p.multiply(q));
 
-        BigInteger p1 = keys.get(2); // private
-        BigInteger q1 = keys.get(3); // private
-        BigInteger d1 = rsaService.getD(p1, q1, EXPONENT); // private
+        BigInteger p1 = keys.get(2);
+        BigInteger q1 = keys.get(3);
+        BigInteger d1 = rsaService.getD(p1, q1, EXPONENT);
         privateKey2.setQ(q1);
         privateKey2.setP(p1);
         privateKey2.setD(d1);
+        privateKey2.setN(p1.multiply(q1));
 
-        BigInteger n = p.multiply(q); // public + exp
-
-        respond.setModulus(n.toString(16));
+        respond.setModulus(privateKey1.getN().toString(16));
         respond.setPublicExponent(EXPONENT.toString(16));
 
         return respond;
@@ -80,8 +88,7 @@ public class RsaController {
         DecryptRespondDto respondDto = new DecryptRespondDto();
         BigInteger cipherText = new BigInteger(requestDto.getCipherText(), 16);
 
-        BigInteger message = rsaService.decrypt(cipherText,
-                privateKey1.getD(), privateKey1.getP().multiply(privateKey1.getQ()));
+        BigInteger message = rsaService.decrypt(cipherText, privateKey1.getD(), privateKey1.getN());
 
         respondDto.setMessage(message.toString(16));
 
@@ -93,8 +100,9 @@ public class RsaController {
         SignRespondDto respondDto = new SignRespondDto();
         BigInteger message = new BigInteger(requestDto.getMessage(), 16);
 
-        respondDto.setSignature(rsaService.sign(message, privateKey1.getD(),
-                privateKey1.getP().multiply(privateKey1.getQ())).toString(16));
+        BigInteger sign = rsaService.sign(message, privateKey1.getD(), privateKey1.getN());
+
+        respondDto.setSignature(sign.toString(16));
 
         return respondDto;
     }

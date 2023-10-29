@@ -8,4 +8,5 @@ public class PrivateKey {
     private BigInteger p;
     private BigInteger q;
     private BigInteger d;
+    private BigInteger n;
 }
