@@ -38,11 +38,11 @@ public class SimplicityTest implements Predicate<BigInteger> {
             boolean prime = false;
             for (BigInteger i = BigInteger.ONE; i.compareTo(s) < 0; i = i.add(BigInteger.ONE)) {
                 BigInteger xr = x.modPow(d.multiply(BigInteger.TWO.pow(i.intValue())), number);
-                if (x.compareTo(BigInteger.ZERO) == -1) {
+                if (xr.compareTo(BigInteger.ZERO) == -1) {
                     prime = true;
                     break;
                 }
-                if (x.compareTo(BigInteger.ZERO) == 1) return false;
+                if (xr.compareTo(BigInteger.ZERO) == 1) return false;
             }
 
             if (!prime) return false;
