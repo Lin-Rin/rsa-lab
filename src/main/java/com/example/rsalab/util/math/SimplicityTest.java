@@ -39,7 +39,9 @@ public class SimplicityTest implements Predicate<BigInteger> {
                 }
             }
 
-            if (s.compareTo(BigInteger.ZERO) == r) return false;
+            if (s.compareTo(BigInteger.ZERO) == r) {
+                return false;
+            }
         }
 
         return true;
