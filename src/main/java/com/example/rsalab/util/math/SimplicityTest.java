@@ -1,6 +1,5 @@
 package com.example.rsalab.util.math;
 
-import io.github.kosssst.asymcryptolab1.generators.L20Generator;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -20,7 +19,7 @@ public class SimplicityTest implements Predicate<BigInteger> {
         }
 
         for (int k = 0; k < number.bitLength(); k++) {
-            BigInteger a = uniformRandom(BigInteger.TWO, number.subtract(BigInteger.ONE));
+            BigInteger a = uniformRandom(number.subtract(BigInteger.ONE));
             BigInteger x = a.modPow(d, number);
 
             if (x.equals(BigInteger.ONE) || x.equals(number.subtract(BigInteger.ONE))) continue;
@@ -38,12 +37,12 @@ public class SimplicityTest implements Predicate<BigInteger> {
         return true;
     }
 
-    private BigInteger uniformRandom(BigInteger bottom, BigInteger top) {
+    private BigInteger uniformRandom(BigInteger top) {
         Random random = new Random();
         BigInteger res;
         do {
             res = new BigInteger(top.bitLength(), random);
-        } while (res.compareTo(bottom) < 0 || res.compareTo(top) > 0);
+        } while (res.compareTo(BigInteger.TWO) < 0 || res.compareTo(top) > 0);
         return res;
     }
 }
