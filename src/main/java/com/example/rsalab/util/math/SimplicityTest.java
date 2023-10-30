@@ -22,13 +22,21 @@ public class SimplicityTest implements Predicate<BigInteger> {
             BigInteger a = uniformRandom(number.subtract(BigInteger.ONE));
             BigInteger x = a.modPow(d, number);
 
-            if (x.equals(BigInteger.ONE) || x.equals(number.subtract(BigInteger.ONE))) continue;
+            if (x.equals(BigInteger.ONE) || x.equals(number.subtract(BigInteger.ONE))) {
+                continue;
+            }
 
             int r = 0;
             for (; s.compareTo(BigInteger.ZERO) > r; r++) {
                 x = x.modPow(BigInteger.TWO, number);
-                if (x.equals(BigInteger.ONE)) return false;
-                if (x.equals(number.subtract(BigInteger.ONE))) break;
+
+                if (x.equals(BigInteger.ONE)) {
+                    return false;
+                }
+
+                if (x.equals(number.subtract(BigInteger.ONE))) {
+                    break;
+                }
             }
 
             if (s.compareTo(BigInteger.ZERO) == r) return false;
