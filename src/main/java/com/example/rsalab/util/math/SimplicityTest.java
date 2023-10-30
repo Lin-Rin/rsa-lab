@@ -19,7 +19,7 @@ public class SimplicityTest implements Predicate<BigInteger> {
             d = d.divide(BigInteger.TWO);
         }
 
-        for (int k = 0; k < number.bitLength() * number.bitLength(); k++) {
+        for (int k = 0; k < number.bitLength(); k++) {
             BigInteger a = uniformRandom(BigInteger.TWO, number.subtract(BigInteger.ONE));
             BigInteger x = a.modPow(d, number);
 
