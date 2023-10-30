@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class RecevieKeyRespondDto {
     private String key;
-    private String verified;
+    private Boolean verified;
 }
