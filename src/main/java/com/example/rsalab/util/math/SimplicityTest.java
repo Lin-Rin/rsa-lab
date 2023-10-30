@@ -3,59 +3,47 @@ package com.example.rsalab.util.math;
 import io.github.kosssst.asymcryptolab1.generators.L20Generator;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.util.Random;
 import java.util.function.Predicate;
 
 @Component
 public class SimplicityTest implements Predicate<BigInteger> {
     @Override
     public boolean test(BigInteger number) {
-        BigInteger pMinusOne = number.subtract(BigInteger.ONE);
         BigInteger s = new BigInteger("0", 10);
-        BigInteger d = new BigInteger("0", 10);
-        L20Generator generator = new L20Generator();
+        BigInteger d = number.subtract(BigInteger.ONE);
 
-        for (BigInteger i = log2(pMinusOne); i.compareTo(BigInteger.ZERO) >= 0; i = i.subtract(BigInteger.ONE)) {
-            BigInteger TwoPowS = BigInteger.TWO.pow(i.intValue());
-            if (pMinusOne.mod(TwoPowS).equals(BigInteger.ZERO)) {
-                d = pMinusOne.divide(TwoPowS);
-                s = i;
-                break;
-            }
+        while (d.mod(BigInteger.TWO).equals(BigInteger.ZERO)) {
+            s = s.add(BigInteger.ONE);
+            d = d.divide(BigInteger.TWO);
         }
 
-        for (int k = 0; k < 2048; k++) {
-            BigInteger x = new BigInteger(generator.generate(number.bitLength()), 2);
-            x = x.mod(number);
+        for (int k = 0; k < number.bitLength() * number.bitLength(); k++) {
+            BigInteger a = uniformRandom(BigInteger.TWO, number.subtract(BigInteger.ONE));
+            BigInteger x = a.modPow(d, number);
 
-            if (x.gcd(number).compareTo(BigInteger.ONE) > 0) return false;
+            if (x.equals(BigInteger.ONE) || x.equals(number.subtract(BigInteger.ONE))) continue;
 
-            if (Math.abs(x.modPow(d, number).compareTo(BigInteger.ZERO)) == 1) continue;
-
-            boolean prime = false;
-            for (BigInteger i = BigInteger.ONE; i.compareTo(s) < 0; i = i.add(BigInteger.ONE)) {
-                BigInteger xr = x.modPow(d.multiply(BigInteger.TWO.pow(i.intValue())), number);
-                if (xr.compareTo(BigInteger.ZERO) == -1) {
-                    prime = true;
-                    break;
-                }
-                if (xr.compareTo(BigInteger.ZERO) == 1) return false;
+            int r = 0;
+            for (; s.compareTo(BigInteger.ZERO) > r; r++) {
+                x = x.modPow(BigInteger.TWO, number);
+                if (x.equals(BigInteger.ONE)) return false;
+                if (x.equals(number.subtract(BigInteger.ONE))) break;
             }
 
-            if (!prime) return false;
+            if (s.compareTo(BigInteger.ZERO) == r) return false;
         }
 
         return true;
     }
 
-    private BigInteger log2(BigInteger number) {
-        int precision = 100;
-        MathContext mathContext = new MathContext(precision, RoundingMode.HALF_UP);
-        BigDecimal result = BigDecimal.valueOf(Math.log(number.doubleValue()) / Math.log(2));
-        result = result.round(mathContext);
-        return result.toBigInteger();
+    private BigInteger uniformRandom(BigInteger bottom, BigInteger top) {
+        Random random = new Random();
+        BigInteger res;
+        do {
+            res = new BigInteger(top.bitLength(), random);
+        } while (res.compareTo(bottom) < 0 || res.compareTo(top) > 0);
+        return res;
     }
 }
