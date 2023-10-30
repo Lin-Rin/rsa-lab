@@ -1,7 +1,6 @@
 package com.example.rsalab.util.math;
 
 import org.springframework.stereotype.Component;
-
 import java.math.BigInteger;
 import java.util.Random;
 import java.util.function.Predicate;
