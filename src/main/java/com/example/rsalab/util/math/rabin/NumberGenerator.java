@@ -8,7 +8,7 @@ import java.math.BigInteger;
 public class NumberGenerator {
 
     // type: 4k+1,  test by millerRabin
-    public BigInteger getPrimeNumber() {
+    public BigInteger getPrimeNumber(Long keySize) {
         throw new UnsupportedOperationException();
     }
 
@@ -17,7 +17,7 @@ public class NumberGenerator {
     }
 
     // result < n **(result.compareTo(n) < 0)**, **len_n==len_res**
-    private static BigInteger generateRandomBigInteger(BigInteger n) {
+    public BigInteger generateNumber(BigInteger n) {
         throw new UnsupportedOperationException();
     }
 
