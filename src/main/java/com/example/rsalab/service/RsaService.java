@@ -1,7 +1,7 @@
 package com.example.rsalab.service;
 
 import com.example.rsalab.model.PrivateKey;
-import com.example.rsalab.util.math.PrimeNumberGenerator;
+import com.example.rsalab.util.math.rsa.PrimeNumberGenerator;
 import org.springframework.stereotype.Component;
 import java.math.BigInteger;
 import java.util.ArrayList;
