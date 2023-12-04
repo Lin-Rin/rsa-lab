@@ -9,8 +9,30 @@ import java.util.Objects;
 @Component
 public class MathUtil {
 
-    public List<BigInteger> gcd(BigInteger a, BigInteger b) {
-        throw new UnsupportedOperationException();
+    public BigInteger gcd(BigInteger a, BigInteger b) {
+        BigInteger d = BigInteger.ONE;
+
+        while (isPair(a) && isPair(b)) {
+            a = a.divide(BigInteger.TWO);
+            b = b.divide(BigInteger.TWO);
+            d = d.multiply(BigInteger.TWO);
+        }
+
+        while (isPair(a)) {
+            a = a.divide(BigInteger.TWO);
+        }
+
+        while (!b.equals(BigInteger.ZERO)) {
+            while (isPair(b)) {
+                b = b.divide(BigInteger.TWO);
+            }
+            BigInteger temp = a.subtract(b).abs();
+            a = a.min(b);
+            b = temp;
+        }
+
+        d = d.multiply(a);
+        return d;
     }
 
     public List<BigInteger> extendedEuclidean(BigInteger p, BigInteger q) {
@@ -37,5 +59,9 @@ public class MathUtil {
         }
 
         return pred;
+    }
+
+    private boolean isPair(BigInteger a) {
+        return a.mod(BigInteger.TWO).equals(BigInteger.ZERO);
     }
 }
