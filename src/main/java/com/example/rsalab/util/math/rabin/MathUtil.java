@@ -41,12 +41,13 @@ public class MathUtil {
 
     public List<BigInteger> sqrt(BigInteger y, BigInteger p, BigInteger q) {
         throw new UnsupportedOperationException();
-
     }
 
     public BigInteger getJacobiSymbol(BigInteger a, BigInteger n) {
         BigInteger minusOne = BigInteger.ZERO.subtract(BigInteger.ONE);
         BigInteger pred = BigInteger.ONE;
+
+        if (!gcd(a, n).equals(BigInteger.ONE)) return BigInteger.ZERO;
 
         while (!Objects.equals(a, BigInteger.ONE)) {
             if (a.compareTo(n) > 0) {
