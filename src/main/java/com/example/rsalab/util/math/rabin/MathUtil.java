@@ -45,9 +45,9 @@ public class MathUtil {
             result.add((BigInteger.ZERO));
         } else {
             List<BigInteger> newResult = extendedEuclidean(q, p.mod(q));
-            result.set(0, newResult.get(0));
-            result.set(1, newResult.get(2));
-            result.set(2, newResult.get(1).subtract(p.divide(q).multiply(newResult.get(2))));
+            result.add(newResult.get(0));
+            result.add(newResult.get(2));
+            result.add(newResult.get(1).subtract(p.divide(q).multiply(newResult.get(2))));
         }
 
         return result;
