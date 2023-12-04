@@ -54,7 +54,18 @@ public class MathUtil {
     }
 
     public List<BigInteger> sqrt(BigInteger y, BigInteger p, BigInteger q) {
-        throw new UnsupportedOperationException();
+        BigInteger s1 = y.modPow(p.add(BigInteger.ONE).divide(new BigInteger("4", 10)), p);
+        BigInteger s2 = y.modPow(q.add(BigInteger.ONE).divide(new BigInteger("4", 10)), q);
+
+        List<BigInteger> uv = extendedEuclidean(p, q);
+
+        List<BigInteger> x = new ArrayList<>();
+        x.add(uv.get(1).multiply(p).multiply(s1).add(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
+        x.add(uv.get(1).multiply(p).multiply(s1).subtract(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
+        x.add(BigInteger.ZERO.subtract(uv.get(1).multiply(p).multiply(s1)).add(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
+        x.add(BigInteger.ZERO.subtract(uv.get(1).multiply(p).multiply(s1)).subtract(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
+
+        return x;
     }
 
     public BigInteger getJacobiSymbol(BigInteger a, BigInteger n) {
