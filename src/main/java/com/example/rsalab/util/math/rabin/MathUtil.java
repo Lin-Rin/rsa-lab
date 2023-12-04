@@ -3,6 +3,7 @@ package com.example.rsalab.util.math.rabin;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +37,20 @@ public class MathUtil {
     }
 
     public List<BigInteger> extendedEuclidean(BigInteger p, BigInteger q) {
-        throw new UnsupportedOperationException();
+        List<BigInteger> result = new ArrayList<>();
+
+        if (q.equals(BigInteger.ZERO)) {
+            result.add(p);
+            result.add(BigInteger.ONE);
+            result.add((BigInteger.ZERO));
+        } else {
+            List<BigInteger> newResult = extendedEuclidean(q, p.mod(q));
+            result.set(0, newResult.get(0));
+            result.set(1, newResult.get(2));
+            result.set(2, newResult.get(1).subtract(p.divide(q).multiply(newResult.get(2))));
+        }
+
+        return result;
     }
 
     public List<BigInteger> sqrt(BigInteger y, BigInteger p, BigInteger q) {
@@ -53,7 +67,7 @@ public class MathUtil {
             if (a.compareTo(n) > 0) {
                 a = a.mod(n);
             }
-            pred = pred.multiply(minusOne.pow((a.subtract(BigInteger.ONE).multiply(n.subtract(BigInteger.ONE))).intValue() / 4));
+            pred = pred.multiply(minusOne.pow((a.subtract(BigInteger.ONE).multiply(n.subtract(BigInteger.ONE))).divide(new BigInteger("4", 10)).mod(BigInteger.TWO).intValue()));
             BigInteger temp = a;
             a = n;
             n = temp;
