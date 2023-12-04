@@ -49,7 +49,12 @@ public class RabinService {
         BigInteger n = new BigInteger(request.getModulus(), 16);
         BigInteger b = new BigInteger(request.getB(), 16);
 
-        var x = formatMessage(m, request.getModulus().length());
+        var x = formatMessage(m, n.bitLength());
+
+        if (Math.ceil((double) m.bitLength() / 8) > Math.ceil((double) n.bitLength() / 8) - 10) {
+            throw new RuntimeException("Message is too big");
+        }
+
         var temp = x.add(b.multiply(BigInteger.valueOf(2).modInverse(n)));
 
         var y = x.multiply((x.add(b))).mod(n);
