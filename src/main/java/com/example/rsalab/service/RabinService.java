@@ -1,5 +1,6 @@
 package com.example.rsalab.service;
 
+import com.example.rsalab.dto.rabin.decrypt.DecryptRequest;
 import com.example.rsalab.dto.rabin.decrypt.DecryptResponse;
 import com.example.rsalab.dto.rabin.encrypt.EncryptRequest;
 import com.example.rsalab.dto.rabin.encrypt.EncryptResponse;
@@ -40,9 +41,9 @@ public class RabinService {
     public EncryptResponse encrypt(EncryptRequest request) {
         EncryptResponse response = new EncryptResponse();
 
-        BigInteger m = new BigInteger(request.getText());
-        BigInteger n = new BigInteger(request.getModulus());
-        BigInteger b = new BigInteger(request.getB());
+        BigInteger m = new BigInteger(request.getText(), 16);
+        BigInteger n = new BigInteger(request.getModulus(), 16);
+        BigInteger b = new BigInteger(request.getB(), 16);
 
         var x = formatMessage(m, request.getModulus().length());
         var temp = x.add(b.multiply(BigInteger.valueOf(2).modInverse(n)));
@@ -75,8 +76,10 @@ public class RabinService {
     }
 
     // (y, c1, c2)
-    public DecryptResponse decrypt(List<BigInteger> cipherText) {
+    public DecryptResponse decrypt(DecryptRequest request) {
         DecryptResponse response = new DecryptResponse();
+
+
 
         return response;
     }
