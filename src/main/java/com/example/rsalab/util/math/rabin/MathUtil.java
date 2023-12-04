@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class MathUtil {
@@ -22,6 +23,19 @@ public class MathUtil {
     }
 
     public BigInteger getJacobiSymbol(BigInteger a, BigInteger n) {
-        throw new UnsupportedOperationException();
+        BigInteger minusOne = BigInteger.ZERO.subtract(BigInteger.ONE);
+        BigInteger pred = BigInteger.ONE;
+
+        while (!Objects.equals(a, BigInteger.ONE)) {
+            if (a.compareTo(n) > 0) {
+                a = a.mod(n);
+            }
+            pred = pred.multiply(minusOne.pow((a.subtract(BigInteger.ONE).multiply(n.subtract(BigInteger.ONE))).intValue() / 4));
+            BigInteger temp = a;
+            a = n;
+            n = temp;
+        }
+
+        return pred;
     }
 }
