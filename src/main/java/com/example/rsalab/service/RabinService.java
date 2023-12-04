@@ -5,11 +5,15 @@ import com.example.rsalab.dto.rabin.decrypt.DecryptResponse;
 import com.example.rsalab.dto.rabin.encrypt.EncryptRequest;
 import com.example.rsalab.dto.rabin.encrypt.EncryptResponse;
 import com.example.rsalab.dto.rabin.generate.ServerKeyResponse;
+import com.example.rsalab.dto.rabin.sign.SignRequest;
+import com.example.rsalab.dto.rabin.sign.SignResponse;
+import com.example.rsalab.dto.rabin.verify.VerifyRequest;
+import com.example.rsalab.dto.rabin.verify.VerifyResponse;
 import com.example.rsalab.model.RabinPrivateKey;
 import com.example.rsalab.util.math.rabin.MathUtil;
 import com.example.rsalab.util.math.rabin.NumberGenerator;
 import java.math.BigInteger;
-import java.util.List;import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -84,11 +88,12 @@ public class RabinService {
         return response;
     }
 
-    public List<BigInteger> sign(BigInteger p, BigInteger q, BigInteger message, BigInteger n, BigInteger x) {
+    public SignResponse sign(SignRequest request) {
         throw new UnsupportedOperationException();
     }
 
-    public BigInteger verify(BigInteger sign, BigInteger n) {
+    public VerifyResponse verify(VerifyRequest request) {
         throw new UnsupportedOperationException();
     }
+
 }
