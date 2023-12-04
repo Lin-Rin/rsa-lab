@@ -60,10 +60,14 @@ public class MathUtil {
         List<BigInteger> uv = extendedEuclidean(p, q);
 
         List<BigInteger> x = new ArrayList<>();
-        x.add(uv.get(1).multiply(p).multiply(s1).add(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
-        x.add(uv.get(1).multiply(p).multiply(s1).subtract(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
-        x.add(BigInteger.ZERO.subtract(uv.get(1).multiply(p).multiply(s1)).add(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
-        x.add(BigInteger.ZERO.subtract(uv.get(1).multiply(p).multiply(s1)).subtract(uv.get(2).multiply(q).multiply(s2)).mod(p.multiply(q)));
+
+        BigInteger u = uv.get(1);
+        BigInteger v = uv.get(2);
+
+        x.add(u.multiply(p).multiply(s2).add(v.multiply(q).multiply(s1)).mod(p.multiply(q)));
+        x.add(u.multiply(p).multiply(s2).subtract(v.multiply(q).multiply(s1)).mod(p.multiply(q)));
+        x.add(BigInteger.ZERO.subtract(u.multiply(p).multiply(s2)).add(v.multiply(q).multiply(s1)).mod(p.multiply(q)));
+        x.add(BigInteger.ZERO.subtract(u.multiply(p).multiply(s2)).subtract(v.multiply(q).multiply(s1)).mod(p.multiply(q)));
 
         return x;
     }
