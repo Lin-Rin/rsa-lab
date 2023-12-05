@@ -89,34 +89,62 @@ public class RabinService {
         final var q = privateKey.getQ();
 
         final var fourInverse = BigInteger.valueOf(4).modInverse(n);
-        final var twoInverse = BigInteger.TWO.modInverse(n);
-
         final var sqrtList = mathUtil.sqrt(y.add(b.multiply(b).multiply(fourInverse)), p, q);
-
         var result = BigInteger.ZERO;
-        for (var res : sqrtList) {
-            var yi = res.subtract(b.multiply(twoInverse)).mod(n);
 
-            var temp = yi.add(b.multiply(twoInverse)).modInverse(n);
+        final var x1 = getX(sqrtList.get(0), b, n);
+        final var x2 = getX(sqrtList.get(1), b, n);
+        final var x3 = getX(sqrtList.get(2), b, n);
+        final var x4 = getX(sqrtList.get(3), b, n);
 
-            var cc1 = temp.mod(n).mod(BigInteger.TWO);
-            var cc2 = mathUtil.getJacobiSymbol(temp, n);
-            if (!cc2.equals(BigInteger.ONE)) {
-                cc2 = BigInteger.ZERO;
-            }
+        final var x1c1 = getC1(x1, b, n);
+        final var x2c1 = getC1(x2, b, n);
+        final var x3c1 = getC1(x3, b, n);
+        final var x4c1 = getC1(x4, b, n);
 
-            if (c1.equals(cc1) && c2.equals(cc2)) {
-                result = yi;
+        final var x1c2 = getC2(x1, b, n);
+        final var x2c2 = getC2(x2, b, n);
+        final var x3c2 = getC2(x3, b, n);
+        final var x4c2 = getC2(x4, b, n);
 
-                // need refactor
-                break;
-            }
-
+        if (x1c1.equals(c1) && x1c2.equals(c2)) {
+            result = x1;
+        }
+        if (x2c1.equals(c1) && x2c2.equals(c2)) {
+            result = x2;
+        }
+        if (x3c1.equals(c1) && x3c2.equals(c2)) {
+            result = x3;
+        }
+        if (x4c1.equals(c1) && x4c2.equals(c2)) {
+            result = x4;
         }
 
-        response.setMessage(result.toString(16));
+        final var l = (int) Math.ceil((double) n.bitLength() / 8);
+        BigInteger bigInteger = result.subtract(BigInteger.valueOf(255).multiply(BigInteger.valueOf(2).pow(8 * (l - 2)))).shiftRight(64);
+
+        response.setMessage(bigInteger.toString(16));
 
         return response;
+    }
+
+    private BigInteger getX(final BigInteger x, final BigInteger b, final BigInteger n) {
+        final var twoInverse = BigInteger.valueOf(2).modInverse(n);
+
+        return x.subtract(b.multiply(twoInverse)).mod(n);
+    }
+
+    private BigInteger getC1(final BigInteger x, final BigInteger b, final BigInteger n) {
+        final var twoInverse = BigInteger.valueOf(2).modInverse(n);
+
+        return x.add(b.multiply(twoInverse)).mod(n).mod(BigInteger.TWO);
+    }
+
+    private BigInteger getC2(final BigInteger x, final BigInteger b, final BigInteger n) {
+        final var twoInverse = BigInteger.valueOf(2).modInverse(n);
+        final var c2 = mathUtil.getJacobiSymbol(x.add(b.multiply(twoInverse)), n);
+
+        return c2.compareTo(BigInteger.ONE) == 0 ? BigInteger.ONE : BigInteger.ZERO;
     }
 
     public SignResponse sign(SignRequest request) {
