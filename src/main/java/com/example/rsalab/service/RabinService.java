@@ -15,6 +15,8 @@ import com.example.rsalab.util.math.rabin.MathUtil;
 import com.example.rsalab.util.math.rabin.NumberGenerator;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Random;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -122,24 +124,44 @@ public class RabinService {
     }
 
     public SignResponse sign(SignRequest request) {
-        SignResponse response = new SignResponse();
+        final var response = new SignResponse();
 
+        final var message = new BigInteger(request.getMessage(), 16);
+        final var p = privateKey.getP();
+        final var q = privateKey.getQ();
+        final var n = publicKey.getN();
+        var result = BigInteger.ONE;
 
+        while (true) {
+            var formatted = formatMessage(message, n.bitLength());
+
+            while (!mathUtil.getJacobiSymbol(formatted, p).equals(BigInteger.ONE) && !mathUtil.getJacobiSymbol(formatted, q).equals(BigInteger.ONE)) {
+                formatted = formatMessage(message, n.bitLength());
+            }
+
+            final var sqrtRoot = mathUtil.sqrt(formatted, p, q).get(new Random().nextInt(4));
+            if (sqrtRoot.modPow(BigInteger.TWO, n).equals(formatted.mod(n))) {
+                result = sqrtRoot;
+                break;
+            }
+        }
+
+        response.setSignature(result.toString(16));
 
         return response;
     }
 
     public VerifyResponse verify(VerifyRequest request) {
-        VerifyResponse response = new VerifyResponse();
+        final var response = new VerifyResponse();
 
         final var message = new BigInteger(request.getMessage(), 16);
         final var sign = new BigInteger(request.getSignature(), 16);
         final var n = new BigInteger(request.getModulus(), 16);
 
-        var x = sign.modPow(BigInteger.TWO, n);
-        var formatted = formatMessage(message, n.bitLength());
+        final var x = sign.modPow(BigInteger.TWO, n);
+        final var formatted = formatMessage(message, n.bitLength());
 
-        Boolean result = Boolean.FALSE;
+        var result = Boolean.FALSE;
         if (x.shiftRight(64).equals(formatted.shiftRight(64))) {
             result = Boolean.TRUE;
         }
