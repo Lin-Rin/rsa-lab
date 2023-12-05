@@ -15,7 +15,6 @@ import com.example.rsalab.util.math.rabin.MathUtil;
 import com.example.rsalab.util.math.rabin.NumberGenerator;
 import java.math.BigInteger;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -91,55 +90,35 @@ public class RabinService {
         var p = privateKey.getP();
         var q = privateKey.getQ();
 
-        List<BigInteger> sqrt = mathUtil.sqrt(y.add(b.pow(2).multiply(BigInteger.valueOf(4).modInverse(n))), p, q);
+        BigInteger fourInverse = BigInteger.valueOf(4).modInverse(n);
+        BigInteger twoInverse = BigInteger.TWO.modInverse(n);
 
-        BigInteger result = null;
-        var x1 = getX(sqrt.get(0), b, n);
-        var x2 = getX(sqrt.get(1), b, n);
-        var x3 = getX(sqrt.get(2), b, n);
-        var x4 = getX(sqrt.get(3), b, n);
+        List<BigInteger> sqrt = mathUtil.sqrt(y.add(b.multiply(b).multiply(fourInverse)), p, q);
 
-        var val = b.multiply(BigInteger.valueOf(2).modInverse(n));
-        var temp1 = x1.add(val);
-        var temp2 = x2.add(val);
-        var temp3 = x3.add(val);
-        var temp4 = x4.add(val);
+        BigInteger result = BigInteger.ZERO;
+        for (var res : sqrt) {
+            var yi = res.subtract(b.multiply(twoInverse)).mod(n);
 
-        var x1c1 = temp1.mod(n).mod(BigInteger.TWO).mod(n).mod(BigInteger.TWO);
-        var x2c1 = temp2.mod(n).mod(BigInteger.TWO).mod(n).mod(BigInteger.TWO);
-        var x3c1 = temp3.mod(n).mod(BigInteger.TWO).mod(n).mod(BigInteger.TWO);
-        var x4c1 = temp4.mod(n).mod(BigInteger.TWO).mod(n).mod(BigInteger.TWO);
+            var temp = yi.add(b.multiply(twoInverse)).modInverse(n);
 
-        var x1c2 = mathUtil.getJacobiSymbol(temp1, n);
-        var x2c2 = mathUtil.getJacobiSymbol(temp2, n);
-        var x3c2 = mathUtil.getJacobiSymbol(temp3, n);
-        var x4c2 = mathUtil.getJacobiSymbol(temp4, n);
+            var cc1 = temp.mod(n).mod(BigInteger.TWO);
+            var cc2 = mathUtil.getJacobiSymbol(temp, n);
+            if (!cc2.equals(BigInteger.ONE)) {
+                cc2 = BigInteger.ZERO;
+            }
 
-        if (c1.equals(x1c1) && c2.equals(x1c2)) {
-            result = x1;
-        }
-        if (c1.equals(x2c1) && c2.equals(x2c2)) {
-            result = x2;
-        }
-        if (c1.equals(x3c1) && c2.equals(x3c2)) {
-            result = x3;
-        }
-        if (c1.equals(x4c1) && c2.equals(x4c2)) {
-            result = x4;
-        }
+            if (c1.equals(cc1) && c2.equals(cc2)) {
+                result = yi;
 
-        if (result == null) {
-            throw new RuntimeException("Cannot be decrypted");
+                // need refactor
+                break;
+            }
+
         }
 
         response.setMessage(result.toString(16));
 
         return response;
-    }
-
-    private BigInteger getX(BigInteger x, BigInteger b, BigInteger n) {
-        BigInteger inv2 = BigInteger.valueOf(2).modInverse(n);
-        return x.subtract(b.multiply(inv2)).mod(n);
     }
 
     public SignResponse sign(SignRequest request) {
@@ -153,7 +132,19 @@ public class RabinService {
     public VerifyResponse verify(VerifyRequest request) {
         VerifyResponse response = new VerifyResponse();
 
+        final var message = new BigInteger(request.getMessage(), 16);
+        final var sign = new BigInteger(request.getSignature(), 16);
+        final var n = new BigInteger(request.getModulus(), 16);
 
+        var x = sign.modPow(BigInteger.TWO, n);
+        var formatted = formatMessage(message, n.bitLength());
+
+        Boolean result = Boolean.FALSE;
+        if (x.shiftRight(64).equals(formatted.shiftRight(64))) {
+            result = Boolean.TRUE;
+        }
+
+        response.setVerified(result);
 
         return response;
     }
