@@ -14,9 +14,7 @@ import com.example.rsalab.model.RabinPrivateKey;
 import com.example.rsalab.util.math.rabin.MathUtil;
 import com.example.rsalab.util.math.rabin.NumberGenerator;
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Random;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,17 +27,17 @@ public class RabinService {
     private final NumberGenerator generator;
 
     public ServerKeyResponse serverKey(Long keySize) {
-        ServerKeyResponse response = new ServerKeyResponse();
+        final var response = new ServerKeyResponse();
         privateKey = new RabinPrivateKey();
         publicKey = new RabinPublicKey();
 
-        var p = generator.getPrimeNumber(keySize);
-        var q = generator.getPrimeNumber(keySize);
+        final var p = generator.getPrimeNumber(keySize);
+        final var q = generator.getPrimeNumber(keySize);
         privateKey.setQ(q);
         privateKey.setP(p);
 
-        var n = p.multiply(q);
-        BigInteger b = generator.generateNumber(BigInteger.valueOf(2).pow(Math.toIntExact(keySize)));
+        final var n = p.multiply(q);
+        final var b = generator.generateNumber(BigInteger.valueOf(2).pow(Math.toIntExact(keySize)));
         publicKey.setN(n);
         publicKey.setB(b);
 
@@ -49,24 +47,23 @@ public class RabinService {
         return response;
     }
 
-    // (y, c1, c2)
     public EncryptResponse encrypt(EncryptRequest request) {
-        EncryptResponse response = new EncryptResponse();
+        final var response = new EncryptResponse();
 
-        BigInteger m = new BigInteger(request.getText(), 16);
-        BigInteger n = new BigInteger(request.getModulus(), 16);
-        BigInteger b = new BigInteger(request.getB(), 16);
+        final var m = new BigInteger(request.getText(), 16);
+        final var n = new BigInteger(request.getModulus(), 16);
+        final var b = new BigInteger(request.getB(), 16);
 
-        var x = formatMessage(m, n.bitLength());
+        final var x = formatMessage(m, n.bitLength());
 
         if (Math.ceil((double) m.bitLength() / 8) > Math.ceil((double) n.bitLength() / 8) - 10) {
             throw new RuntimeException("Message is too big");
         }
 
-        var temp = x.add(b.multiply(BigInteger.valueOf(2).modInverse(n)));
+        final var temp = x.add(b.multiply(BigInteger.valueOf(2).modInverse(n)));
 
-        var y = x.multiply((x.add(b))).mod(n);
-        var c1 = temp.mod(n).mod(BigInteger.TWO);
+        final var y = x.multiply((x.add(b))).mod(n);
+        final var c1 = temp.mod(n).mod(BigInteger.TWO);
         var c2 = mathUtil.getJacobiSymbol(temp, n);
 
         if (!c2.equals(BigInteger.ONE)) {
@@ -80,25 +77,24 @@ public class RabinService {
         return response;
     }
 
-    // (y, c1, c2)
     public DecryptResponse decrypt(DecryptRequest request) {
-        DecryptResponse response = new DecryptResponse();
+        final var response = new DecryptResponse();
 
-        BigInteger y = new BigInteger(request.getCiphertext(), 16);
-        BigInteger c1 = new BigInteger(request.getParity(), 16);
-        BigInteger c2 = new BigInteger(request.getJacobiSymbol(), 16);
-        var b = publicKey.getB();
-        var n = publicKey.getN();
-        var p = privateKey.getP();
-        var q = privateKey.getQ();
+        final var y = new BigInteger(request.getCiphertext(), 16);
+        final var c1 = new BigInteger(request.getParity(), 16);
+        final var c2 = new BigInteger(request.getJacobiSymbol(), 16);
+        final var b = publicKey.getB();
+        final var n = publicKey.getN();
+        final var p = privateKey.getP();
+        final var q = privateKey.getQ();
 
-        BigInteger fourInverse = BigInteger.valueOf(4).modInverse(n);
-        BigInteger twoInverse = BigInteger.TWO.modInverse(n);
+        final var fourInverse = BigInteger.valueOf(4).modInverse(n);
+        final var twoInverse = BigInteger.TWO.modInverse(n);
 
-        List<BigInteger> sqrt = mathUtil.sqrt(y.add(b.multiply(b).multiply(fourInverse)), p, q);
+        final var sqrtList = mathUtil.sqrt(y.add(b.multiply(b).multiply(fourInverse)), p, q);
 
-        BigInteger result = BigInteger.ZERO;
-        for (var res : sqrt) {
+        var result = BigInteger.ZERO;
+        for (var res : sqrtList) {
             var yi = res.subtract(b.multiply(twoInverse)).mod(n);
 
             var temp = yi.add(b.multiply(twoInverse)).modInverse(n);
@@ -172,14 +168,13 @@ public class RabinService {
     }
 
     private BigInteger formatMessage(BigInteger message, int n) {
-        int l = (int) Math.ceil((double) n / 8);
+        final var l = (int) Math.ceil((double) n / 8);
 
-        BigInteger r = generator.get64BitNumber();
+        final var r = generator.get64BitNumber();
 
-        var x = BigInteger.valueOf(255).multiply(BigInteger.valueOf(2).pow(8 * (l - 2)));
-        x = x.add(message.multiply(BigInteger.valueOf(2).pow(64)));
-        x = x.add(r);
-
-        return x;
+        return BigInteger.valueOf(255)
+                .multiply(BigInteger.valueOf(2).pow(8 * (l - 2)))
+                .add(message.multiply(BigInteger.valueOf(2).pow(64)))
+                .add(r);
     }
 }
