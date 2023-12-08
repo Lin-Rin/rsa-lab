@@ -96,10 +96,10 @@ public class RabinService {
         final var x3c1 = getC1(x3, b, n);
         final var x4c1 = getC1(x4, b, n);
 
-        final var x1c2 = getC2(x1, b, n);
-        final var x2c2 = getC2(x2, b, n);
-        final var x3c2 = getC2(x3, b, n);
-        final var x4c2 = getC2(x4, b, n);
+        final var x1c2 = getC2Indicator(x1, b, n);
+        final var x2c2 = getC2Indicator(x2, b, n);
+        final var x3c2 = getC2Indicator(x3, b, n);
+        final var x4c2 = getC2Indicator(x4, b, n);
 
         // to remove
         System.out.println("x1 -- c1: " + x1c1 + ", c2: " + x1c2);
@@ -153,6 +153,7 @@ public class RabinService {
                 .mod(BigInteger.TWO);
     }
 
+    @Deprecated // to remove
     private BigInteger getC2(final BigInteger x, final BigInteger b, final BigInteger n) {
         final var temp = x.add(b.multiply(BigInteger.TWO.modInverse(n)));
 
