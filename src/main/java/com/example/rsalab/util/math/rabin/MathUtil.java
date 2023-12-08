@@ -73,22 +73,38 @@ public class MathUtil {
     }
 
     public BigInteger getJacobiSymbol(BigInteger a, BigInteger n) {
-        BigInteger minusOne = BigInteger.ZERO.subtract(BigInteger.ONE);
-        BigInteger pred = BigInteger.ONE;
+        int result = 1;
+        BigInteger THREE = new BigInteger("3", 10);
+        BigInteger FOUR = new BigInteger("4", 10);
+        BigInteger FIVE = new BigInteger("5", 10);
+        BigInteger EIGHT = new BigInteger("8", 10);
 
-        if (!gcd(a, n).equals(BigInteger.ONE)) return BigInteger.ZERO;
 
-        while (!Objects.equals(a, BigInteger.ONE)) {
-            if (a.compareTo(n) > 0) {
-                a = a.mod(n);
+        while (!a.equals(BigInteger.ZERO)) {
+            while (a.mod(BigInteger.TWO).equals(BigInteger.ZERO)) {
+                a = a.divide(BigInteger.TWO);
+                BigInteger r = n.mod(EIGHT);
+                if (r.equals(THREE) || r.equals(FIVE)) {
+                    result = -result;
+                }
             }
-            pred = pred.multiply(minusOne.pow((a.subtract(BigInteger.ONE).multiply(n.subtract(BigInteger.ONE))).divide(new BigInteger("4", 10)).mod(BigInteger.TWO).intValue()));
+
             BigInteger temp = a;
             a = n;
             n = temp;
+
+            if (a.mod(FOUR).equals(THREE) && n.mod(FOUR).equals(THREE)) {
+                result = -result;
+            }
+
+            a = a.mod(n);
         }
 
-        return pred;
+        if (n.equals(BigInteger.ONE)) {
+            return BigInteger.valueOf(result);
+        } else {
+            return BigInteger.ZERO;
+        }
     }
 
     private boolean isPair(BigInteger a) {
