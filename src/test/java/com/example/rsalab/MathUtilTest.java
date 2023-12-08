@@ -1,5 +1,7 @@
 package com.example.rsalab;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.example.rsalab.util.math.rabin.MathUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +14,39 @@ import java.util.List;
 public class MathUtilTest {
     @InjectMocks
     private MathUtil mathUtil;
+
+    @Test
+    void jacobiTest1() {
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(12),   BigInteger.valueOf(7)));
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(12),   BigInteger.valueOf(77)));
+        assertEquals(BigInteger.ONE,          mathUtil.getJacobiSymbol(BigInteger.valueOf(13),   BigInteger.valueOf(77)));
+        assertEquals(BigInteger.ZERO,         mathUtil.getJacobiSymbol(BigInteger.valueOf(154),  BigInteger.valueOf(77)));
+
+        assertEquals(BigInteger.ONE,          mathUtil.getJacobiSymbol(BigInteger.valueOf(23247669130L),  BigInteger.valueOf(1669)));
+    }
+
+    @Test
+    void jacobiTest2() {
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(3),  BigInteger.valueOf(17)));
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(10), BigInteger.valueOf(21)));
+        assertEquals(BigInteger.ZERO,         mathUtil.getJacobiSymbol(BigInteger.valueOf(7),  BigInteger.valueOf(35)));
+
+        assertEquals(BigInteger.ONE,          mathUtil.getJacobiSymbol(BigInteger.valueOf(2),  BigInteger.valueOf(15)));
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(19), BigInteger.valueOf(35)));
+        assertEquals(BigInteger.ONE,          mathUtil.getJacobiSymbol(BigInteger.valueOf(13), BigInteger.valueOf(51)));
+
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(3),  BigInteger.valueOf(17)));
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(31), BigInteger.valueOf(77)));
+        assertEquals(BigInteger.ONE,          mathUtil.getJacobiSymbol(BigInteger.valueOf(5),  BigInteger.valueOf(91)));
+
+    }
+
+    @Test
+    void jacobiTest3() {
+        assertEquals(BigInteger.ONE.negate(), mathUtil.getJacobiSymbol(BigInteger.valueOf(122),  BigInteger.valueOf(143)));
+        assertEquals(BigInteger.ZERO,         mathUtil.getJacobiSymbol(BigInteger.valueOf(169),  BigInteger.valueOf(143)));
+        assertEquals(BigInteger.ONE,          mathUtil.getJacobiSymbol(BigInteger.valueOf(1669), BigInteger.valueOf(143)));
+    }
 
     @Test
     void sqrtTest1() {
