@@ -1,4 +1,4 @@
-package com.example.rsalab.util.math;
+package com.example.rsalab.util.math.rsa;
 
 import io.github.kosssst.asymcryptolab1.generators.L20Generator;
 import org.springframework.stereotype.Component;

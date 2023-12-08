@@ -1,4 +1,4 @@
-package com.example.rsalab.util.math;
+package com.example.rsalab.util.math.rsa;
 
 import lombok.Setter;
 import org.springframework.stereotype.Component;
