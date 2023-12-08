@@ -9,12 +9,20 @@ import com.example.rsalab.dto.rabin.sign.SignRequest;
 import com.example.rsalab.dto.rabin.sign.SignResponse;
 import com.example.rsalab.dto.rabin.verify.VerifyRequest;
 import com.example.rsalab.dto.rabin.verify.VerifyResponse;
+import com.example.rsalab.dto.rabin.znp.CandidatesRequest;
+import com.example.rsalab.dto.rabin.znp.CandidatesResponse;
+import com.example.rsalab.dto.rabin.znp.FindPQRequest;
+import com.example.rsalab.dto.rabin.znp.FindPQResponse;
 import com.example.rsalab.model.RabinPublicKey;
 import com.example.rsalab.model.RabinPrivateKey;
 import com.example.rsalab.util.math.rabin.MathUtil;
 import com.example.rsalab.util.math.rabin.NumberGenerator;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import io.github.kosssst.asymcryptolab1.generators.L20Generator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -176,5 +184,42 @@ public class RabinService {
                 .multiply(BigInteger.valueOf(2).pow(8 * (l - 2)))
                 .add(message.multiply(BigInteger.valueOf(2).pow(64)))
                 .add(r);
+    }
+
+    public CandidatesResponse candidates(CandidatesRequest request) {
+        final var response = new CandidatesResponse();
+        L20Generator generator = new L20Generator();
+        List<String> candidates = new ArrayList<>();
+        List<String> t = new ArrayList<>();
+
+        int count = Integer.parseInt(request.getCount(), 10);
+        BigInteger modulus = new BigInteger(request.getModulus(), 16);
+
+        for (int i = 0; i < count; i++) {
+            BigInteger temp = new BigInteger(generator.generate(modulus.bitLength()), 2);
+            t.add(temp.toString(16));
+            candidates.add(temp.modPow(BigInteger.TWO, modulus).toString(16));
+        }
+
+        response.setCandidates(candidates);
+        response.setT(t);
+
+        return response;
+    }
+
+    public FindPQResponse PQ(FindPQRequest request) {
+        final var response = new FindPQResponse();
+
+        BigInteger n = new BigInteger(request.getModulus(), 16);
+        BigInteger t = new BigInteger(request.getT(), 16);
+        BigInteger z = new BigInteger(request.getRoot(), 16);
+
+        BigInteger p = mathUtil.gcd(t.add(z), n);
+        BigInteger q = n.divide(p);
+
+        response.setP(p.toString(16));
+        response.setQ(q.toString(16));
+
+        return response;
     }
 }

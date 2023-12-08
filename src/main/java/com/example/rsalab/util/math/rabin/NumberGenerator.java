@@ -9,7 +9,7 @@ import com.example.rsalab.util.math.rsa.SimplicityTest;
 @Component
 public class NumberGenerator {
 
-    // type: 4k+1,  test by millerRabin
+    // type: 4k+3,  test by millerRabin
     public BigInteger getPrimeNumber(Long keySize) {
         L20Generator generator = new L20Generator();
         BigInteger k = new BigInteger(generator.generate(keySize.intValue() - 3), 2);

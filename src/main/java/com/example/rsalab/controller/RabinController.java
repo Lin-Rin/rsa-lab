@@ -9,6 +9,10 @@ import com.example.rsalab.dto.rabin.sign.SignRequest;
 import com.example.rsalab.dto.rabin.sign.SignResponse;
 import com.example.rsalab.dto.rabin.verify.VerifyRequest;
 import com.example.rsalab.dto.rabin.verify.VerifyResponse;
+import com.example.rsalab.dto.rabin.znp.CandidatesRequest;
+import com.example.rsalab.dto.rabin.znp.CandidatesResponse;
+import com.example.rsalab.dto.rabin.znp.FindPQRequest;
+import com.example.rsalab.dto.rabin.znp.FindPQResponse;
 import com.example.rsalab.service.RabinService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,5 +60,19 @@ public class RabinController {
             @RequestBody VerifyRequest request
     ) {
         return rabinService.verify(request);
+    }
+
+    @GetMapping("/getCandidates")
+    public CandidatesResponse getCandidates(
+            @RequestBody CandidatesRequest request
+    ) {
+        return rabinService.candidates(request);
+    }
+
+    @GetMapping("/findPQ")
+    public FindPQResponse getPQ(
+            @RequestBody FindPQRequest request
+    ) {
+        return rabinService.PQ(request);
     }
 }
